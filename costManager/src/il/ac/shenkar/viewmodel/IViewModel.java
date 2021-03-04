@@ -16,9 +16,9 @@ public interface IViewModel {
     //methods:
     public void disconnectDB();
     public void addCostItem(il.ac.shenkar.model.CostTransaction item);
-    public void addCtegoryItem(String category);
+    public void addCategoryItem(String category);
     public void getCostByDate(String fDate, String lDate);
-//    public void displayPieChart(String fDate, String lDate);
+    public void displayPieChart(String fDate, String lDate);
     public void getAllCosts();
     public void getAllCategories();
     public void deleteCostByIndex(int index);

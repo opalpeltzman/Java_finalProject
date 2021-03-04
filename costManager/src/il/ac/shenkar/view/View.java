@@ -32,7 +32,7 @@ public class View implements IView {
     //delete cost by index
     private DeleteCostByIndexGUI deleteCost;
     //show pie chat for costs
-//    private displayPieChart showPieChart;
+    private displayPieChartGUI showPieChart;
 
 
     @Override
@@ -59,10 +59,10 @@ public class View implements IView {
         allCate.showAllCategories(vec);
     }
 
-//    @Override
-//    public void displayPieChart(HashMap<String, Double> categoryCosts) {
-//        showPieChart.displayPieChart(categoryCosts);
-//    }
+    @Override
+    public void displayPieChart(HashMap<String, Double> categoryCosts) {
+        showPieChart.displayPieChart(categoryCosts);
+    }
 
     public View() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -106,6 +106,7 @@ public class View implements IView {
             getAllCateList = new JButton("Get All Categories");
             getAllCostList = new JButton("Get All Costs");
             deleteCostTransactionByIndex = new JButton("Delete Cost By Index");
+            pieChart = new JButton("Show costs pieChart");
             exit = new JButton("Exit");
             //creating the messages ui components
             lbMessage = new JLabel("Message: ");
@@ -125,7 +126,7 @@ public class View implements IView {
             panelMain.add(getAllCateList);
             panelMain.add(getAllCostList);
             panelMain.add(deleteCostTransactionByIndex);
-//            panelMain.add(pieChart);
+            panelMain.add(pieChart);
             panelMain.add(exit);
 
             //adding the components to the messages panel
@@ -227,15 +228,15 @@ public class View implements IView {
 
             });
 
-//            //handling PieChart
-//            pieChart.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    View.this.showPieChart = new displayPieChart();
-//                    View.this.showPieChart.start();
-//                }
-//
-//            });
+            //handling PieChart
+            pieChart.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    View.this.showPieChart = new displayPieChartGUI();
+                    View.this.showPieChart.start();
+                }
+
+            });
 
             //displaying the window
             frame.setSize(500, 300);
@@ -670,7 +671,7 @@ public class View implements IView {
                         if(cate==null || cate.length()==0) {
                             throw new CostManagerException("category cannot be empty");
                         }
-                        vm.addCtegoryItem(cate);
+                        vm.addCategoryItem(cate);
                     }catch (CostManagerException costManagerException) {
                         costManagerException.printStackTrace();
                     }
@@ -841,126 +842,126 @@ public class View implements IView {
     /**
      * Display PieChart
      */
-//    public class displayPieChart{
-//
-//        private JFrame frame;
-//        private JPanel panelTop;
-//        private JPanel panelMain;
-//        private JScrollPane scrollPane;
-//        private JTextArea textArea;
-//        private JButton search;
-//        private JTextField tfFirstDate;
-//        private JLabel lbFirstDate;
-//        private JTextField tfLastDate;
-//        private JLabel lbLastDate;
-//
-//        displayPieChart(){
-//            //creating the window
-//            frame = new JFrame("PieChart");
-//            //creating the two panels
-//            panelMain = new JPanel();
-//            panelTop = new JPanel();
-//            //creating the main ui components
-//            textArea = new JTextArea();
-//            scrollPane = new JScrollPane(textArea);
-//            search = new JButton("Search");
-//            tfFirstDate = new JTextField(30);
-//            lbFirstDate = new JLabel("Enter First Date : ");
-//            tfLastDate =  new JTextField(30);
-//            lbLastDate = new JLabel("Enter Last Date : ");
-//        }
-//        public void start(){
-//            //adding the components to the top panel
-//            panelTop.add(lbFirstDate);
-//            panelTop.add(tfFirstDate);
-//            panelTop.add(lbLastDate);
-//            panelTop.add(tfLastDate);
-//            panelTop.add(search);
-//
-//            //setting a different color for the panel top
-//            panelTop.setBackground(Color.GRAY);
-//            //setting BorderLayout as the LayoutManager for panelMain
-//            panelMain.setLayout(new GridLayout(1, 1));
-//            //adding the components to the main panel
-//            panelMain.add(scrollPane);
-//            //setting the window layout manager
-//            frame.setLayout(new BorderLayout());
-//            //adding the main panel to the window
-//            frame.add(panelMain, BorderLayout.CENTER);
-//            //adding top panel to the window
-//            frame.add(panelTop, BorderLayout.NORTH);
-//            //handling window closing
-//            frame.addWindowListener(new WindowAdapter() {
-//                /**
-//                 * Invoked when a window is in the process of being closed.
-//                 * The close operation can be overridden at this point.
-//                 *
-//                 * @param e
-//                 */
-//                @Override
-//                public void windowClosing(WindowEvent e) {
-//                    frame.setVisible(false);
-//                }
-//            });
-//
-//            //handling search button click
-//            search.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    try {
-//                        String firstDate = tfFirstDate.getText();
-//                        if(firstDate==null || firstDate.length()==0) {
-//
-//                            throw new CostManagerException("date cannot be empty");
-//                        }
-//
-//                        String lastDate = tfLastDate.getText();
-//                        if(lastDate==null || lastDate.length()==0) {
-//
-//                            throw new CostManagerException("date cannot be empty");
-//                        }
-//
-//                        vm.displayPieChart(firstDate, lastDate);
-//
-//                    }catch (CostManagerException ex) {
-//                        View.this.showMessage("ERROR!: "+ex.getMessage());
-//                    }
-//                }
-//            });
-//
-//            //displaying the window
-//            frame.setSize(1200, 600);
-//            frame.setVisible(true);
-//        }
-//
-//        public void displayPieChart(HashMap<String, Double> categoryCosts) {
-//
-//            StringBuilder sb = new StringBuilder();
-//            Iterator it = categoryCosts.entrySet().iterator();
-//            while (it.hasNext()) {
-//                Map.Entry pair = (Map.Entry)it.next();
-//                System.out.println(pair.getKey() + " = " + pair.getValue());
-//                sb.append("key ");
-//                sb.append(pair.getKey().toString());
-//                sb.append(" ,value ");
-//                sb.append(pair.getValue().toString());
-//                sb.append("\n");
-//                it.remove(); // avoids a ConcurrentModificationException
-//            }
-//
-//            String text = sb.toString();
-//
-//            if (SwingUtilities.isEventDispatchThread()) {
-//                textArea.setText(text);
-//            } else {
-//                SwingUtilities.invokeLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        textArea.setText(text);
-//                    }
-//                });
-//            }
-//        }
-//    }
+    public class displayPieChartGUI{
+
+        private JFrame frame;
+        private JPanel panelTop;
+        private JPanel panelMain;
+        private JScrollPane scrollPane;
+        private JTextArea textArea;
+        private JButton search;
+        private JTextField tfFirstDate;
+        private JLabel lbFirstDate;
+        private JTextField tfLastDate;
+        private JLabel lbLastDate;
+
+        displayPieChartGUI(){
+            //creating the window
+            frame = new JFrame("PieChart");
+            //creating the two panels
+            panelMain = new JPanel();
+            panelTop = new JPanel();
+            //creating the main ui components
+            textArea = new JTextArea();
+            scrollPane = new JScrollPane(textArea);
+            search = new JButton("Search");
+            tfFirstDate = new JTextField(30);
+            lbFirstDate = new JLabel("Enter First Date : ");
+            tfLastDate =  new JTextField(30);
+            lbLastDate = new JLabel("Enter Last Date : ");
+        }
+        public void start(){
+            //adding the components to the top panel
+            panelTop.add(lbFirstDate);
+            panelTop.add(tfFirstDate);
+            panelTop.add(lbLastDate);
+            panelTop.add(tfLastDate);
+            panelTop.add(search);
+
+            //setting a different color for the panel top
+            panelTop.setBackground(Color.GRAY);
+            //setting BorderLayout as the LayoutManager for panelMain
+            panelMain.setLayout(new GridLayout(1, 1));
+            //adding the components to the main panel
+            panelMain.add(scrollPane);
+            //setting the window layout manager
+            frame.setLayout(new BorderLayout());
+            //adding the main panel to the window
+            frame.add(panelMain, BorderLayout.CENTER);
+            //adding top panel to the window
+            frame.add(panelTop, BorderLayout.NORTH);
+            //handling window closing
+            frame.addWindowListener(new WindowAdapter() {
+                /**
+                 * Invoked when a window is in the process of being closed.
+                 * The close operation can be overridden at this point.
+                 *
+                 * @param e
+                 */
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    frame.setVisible(false);
+                }
+            });
+
+            //handling search button click
+            search.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        String firstDate = tfFirstDate.getText();
+                        if(firstDate==null || firstDate.length()==0) {
+
+                            throw new CostManagerException("date cannot be empty");
+                        }
+
+                        String lastDate = tfLastDate.getText();
+                        if(lastDate==null || lastDate.length()==0) {
+
+                            throw new CostManagerException("date cannot be empty");
+                        }
+
+                        vm.displayPieChart(firstDate, lastDate);
+
+                    }catch (CostManagerException ex) {
+                        View.this.showMessage("ERROR!: "+ex.getMessage());
+                    }
+                }
+            });
+
+            //displaying the window
+            frame.setSize(1200, 600);
+            frame.setVisible(true);
+        }
+
+        public void displayPieChart(HashMap<String, Double> categoryCosts) {
+
+            StringBuilder sb = new StringBuilder();
+            Iterator it = categoryCosts.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                System.out.println(pair.getKey() + " = " + pair.getValue());
+                sb.append("key ");
+                sb.append(pair.getKey().toString());
+                sb.append(" ,value ");
+                sb.append(pair.getValue().toString());
+                sb.append("\n");
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+
+            String text = sb.toString();
+
+            if (SwingUtilities.isEventDispatchThread()) {
+                textArea.setText(text);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        textArea.setText(text);
+                    }
+                });
+            }
+        }
+    }
 }
 

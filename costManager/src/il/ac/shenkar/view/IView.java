@@ -17,7 +17,7 @@ public interface IView {
     public void showItems(List<CostTransaction> vec);
     public void showAllCosts(List<Object> vec);
     public void showAllCategories(List<String> vec);
-//    public void displayPieChart(HashMap<String, Double> categoryCosts);
+    public void displayPieChart(HashMap<String, Double> categoryCosts);
     //public void updateCostTrans();
 
 }

@@ -2,6 +2,7 @@ package il.ac.shenkar.model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -523,58 +524,58 @@ public class Model implements IModel {
 
     }
 
-    /**
-     * according to specific index in the bank account table
-     * the user can update the details of the transaction
-     * located in the index he provided,
-     * only if the index is valid.
-     * in order to do that -> need to create a new costTransaction
-     * and replace it with the old costTransaction object.
-     */
-    @Override
-    public void updateCostTrans(int index, CostTransaction trans) throws CostManagerException {
-        Connection connection = null;
-        Statement statement = null;
-        //connection to DB -
-        try {
-            connection = DriverManager.getConnection(connectionURL);
-            System.out.println("Connected to database " + dbName);
-            statement = connection.createStatement();
-
-        } catch (SQLException throwables) {
-            throw new CostManagerException("Error creating DB", throwables);
-        }
-        // check if category is in categories, if not then add it to 'categories' table
-        checkForCate(trans.getCategory());
-
-        try {
-            PreparedStatement psUpdate = connection.prepareStatement(
-                    "update myBankAccount set Category=?, Cost=?, Currency=?, Exspense_date=?, Description=? where Exspense_ID=?");
-            psUpdate.setString(1, trans.getCategory());
-            psUpdate.setDouble(2, trans.getCost());
-            psUpdate.setString(3, trans.getCurrency().name());
-            psUpdate.setDate(4, trans.getDate());
-            psUpdate.setString(5, trans.getDescription());
-            psUpdate.setInt(6, index);
-            psUpdate.executeUpdate();
-            //commitChanges();
-            System.out.println("updated new cost transaction at index: " + index);
-        } catch (SQLException throwables) {
-            throw new CostManagerException("problem updating transaction", throwables);
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException sqle) {
-                throw new CostManagerException("problem releasing data", sqle);
-            }
-            System.out.println("disconnect from " + dbName);
-        }
-    }
+//    /**
+//     * according to specific index in the bank account table
+//     * the user can update the details of the transaction
+//     * located in the index he provided,
+//     * only if the index is valid.
+//     * in order to do that -> need to create a new costTransaction
+//     * and replace it with the old costTransaction object.
+//     */
+//    @Override
+//    public void updateCostTrans(int index, CostTransaction trans) throws CostManagerException {
+//        Connection connection = null;
+//        Statement statement = null;
+//        //connection to DB -
+//        try {
+//            connection = DriverManager.getConnection(connectionURL);
+//            System.out.println("Connected to database " + dbName);
+//            statement = connection.createStatement();
+//
+//        } catch (SQLException throwables) {
+//            throw new CostManagerException("Error creating DB", throwables);
+//        }
+//        // check if category is in categories, if not then add it to 'categories' table
+//        checkForCate(trans.getCategory());
+//
+//        try {
+//            PreparedStatement psUpdate = connection.prepareStatement(
+//                    "update myBankAccount set Category=?, Cost=?, Currency=?, Exspense_date=?, Description=? where Exspense_ID=?");
+//            psUpdate.setString(1, trans.getCategory());
+//            psUpdate.setDouble(2, trans.getCost());
+//            psUpdate.setString(3, trans.getCurrency().name());
+//            psUpdate.setDate(4, trans.getDate());
+//            psUpdate.setString(5, trans.getDescription());
+//            psUpdate.setInt(6, index);
+//            psUpdate.executeUpdate();
+//            //commitChanges();
+//            System.out.println("updated new cost transaction at index: " + index);
+//        } catch (SQLException throwables) {
+//            throw new CostManagerException("problem updating transaction", throwables);
+//        } finally {
+//            try {
+//                if (statement != null) {
+//                    statement.close();
+//                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
+//            } catch (SQLException sqle) {
+//                throw new CostManagerException("problem releasing data", sqle);
+//            }
+//            System.out.println("disconnect from " + dbName);
+//        }
+//    }
 
     /**
      * according to specific index in the bank account table
@@ -715,55 +716,49 @@ public class Model implements IModel {
 
     }
 
-//    @Override
-//    public ArrayList< ArrayList<Object>> getCostsPieChart(String fDate, String lDate) throws CostManagerException {
-//        Connection connection = null;
-//        Statement statement = null;
-//        //connection to DB -
-//        try {
-//            connection = DriverManager.getConnection(connectionURL);
-//            System.out.println("Connected to database " + dbName);
-//            statement = connection.createStatement();
-//
-//        } catch (SQLException throwables) {
-//            throw new CostManagerException("Error creating DB", throwables);
-//        }
-//
-//        ArrayList<Object> categoryCost = new ArrayList<>();
-//        ArrayList< ArrayList<Object>> information = new ArrayList<>();
-//
-//        ResultSet resultSet = null;
-//        //converting string into sql date :
-//        java.sql.Date convertFDate = java.sql.Date.valueOf(fDate);
-//        java.sql.Date convertLDate = java.sql.Date.valueOf(lDate);
-//        String sql = "SELECT Category, Cost FROM myBankAccount WHERE Exspense_date BETWEEN '" + convertFDate + "' AND '" + convertLDate + "' ORDER BY Exspense_ID";
-//        try {
-//            resultSet = statement.executeQuery(sql);
-//            while (resultSet.next()) {
-//                categoryCost.add(resultSet.getString("Category"));
-//                categoryCost.add(resultSet.getDouble("Cost"));
-//                information.add(categoryCost);
-//                categoryCost.clear();
-//                System.out.println("information: " + information);
-//            }
-//        } catch (SQLException throwables) {
-//            throw new CostManagerException("problem getting Transaction Costs by index", throwables);
-//        } finally {
-//            try {
-//
-//                if (statement != null) {
-//                    statement.close();
-//                }
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException sqle) {
-//                throw new CostManagerException("problem releasing data", sqle);
-//            }
-//            System.out.println("disconnect from " + dbName);
-//        }
-//        return information;
-//    }
+    @Override
+    public HashMap<String, Double> getCostsPieChart(String fDate, String lDate) throws CostManagerException {
+        Connection connection = null;
+        Statement statement = null;
+        //connection to DB -
+        try {
+            connection = DriverManager.getConnection(connectionURL);
+            System.out.println("Connected to database " + dbName);
+            statement = connection.createStatement();
+
+        } catch (SQLException throwables) {
+            throw new CostManagerException("Error creating DB", throwables);
+        }
+        HashMap<String, Double> categoryCostsMAp = new HashMap<>();
+        ResultSet resultSet = null;
+
+        //converting string into sql date :
+        java.sql.Date convertFDate = java.sql.Date.valueOf(fDate);
+        java.sql.Date convertLDate = java.sql.Date.valueOf(lDate);
+        String sql = "SELECT Category, SUM(Cost) as Cost FROM myBankAccount WHERE Exspense_date BETWEEN '" + convertFDate + "' AND '" + convertLDate + "' GROUP BY Category";
+        try {
+            resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                categoryCostsMAp.put(resultSet.getString("Category"), resultSet.getDouble("Cost"));
+            }
+        } catch (SQLException throwables) {
+            throw new CostManagerException("problem getting Transaction Costs by index", throwables);
+        } finally {
+            try {
+
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException sqle) {
+                throw new CostManagerException("problem releasing data", sqle);
+            }
+            System.out.println("disconnect from " + dbName);
+        }
+        return categoryCostsMAp;
+    }
 
     /**
      * exiting DB -

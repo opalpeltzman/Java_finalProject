@@ -103,41 +103,28 @@ public class ViewModel implements IViewModel{
         });
     }
 
-//    @Override
-//    public void displayPieChart(String fDate, String lDate) {
-//        exec.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//
-//                    HashMap<String, Double> categoryCostsMAp = new HashMap<>();
-////                    String[] categories = null;
-////                    double [] costs = null;
-//                    ArrayList< ArrayList<Object>> result = new ArrayList<>(model.getCostsPieChart(fDate, lDate));
-//                    for(ArrayList<Object> categoryCost : result) {
-//
-//                        boolean isKeyPresent = categoryCostsMAp.containsKey(categoryCost.get(0));
-//                        if (isKeyPresent){
-//                            categoryCostsMAp.put((String) categoryCost.get(0), Double.sum(categoryCostsMAp.get(categoryCost.get(0)), (Double) categoryCost.get(1)));
-//                        }
-//                        else
-//                            categoryCostsMAp.put((String) categoryCost.get(0), (Double) categoryCost.get(1));
-//                    }
-//                    System.out.println("categoryCostsMAp: " + categoryCostsMAp);
-//                    view.displayPieChart(categoryCostsMAp);
-//
-//                }catch (CostManagerException e) {
-//                    view.showMessage(String.format("ERROR!: " + e.getMessage()));
-//                }
-//            }
-//        });
-//    }
+    @Override
+    public void displayPieChart(String fDate, String lDate) {
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HashMap<String, Double> categoryCostsMAp = new HashMap<>(model.getCostsPieChart(fDate, lDate));
+                    System.out.println("categoryCostsMAp in viewModel" + categoryCostsMAp);
+                    view.displayPieChart(categoryCostsMAp);
+
+                }catch (CostManagerException e) {
+                    view.showMessage(String.format("ERROR!: " + e.getMessage()));
+                }
+            }
+        });
+    }
 
     /**
      * adding new category to DB
      */
     @Override
-    public void addCtegoryItem(String category) {
+    public void addCategoryItem(String category) {
         exec.submit(new Runnable() {
             @Override
             public void run() {
