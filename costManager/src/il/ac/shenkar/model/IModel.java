@@ -8,6 +8,9 @@ import java.util.List;
  * can perform on his bank account data base.
  */
 public interface IModel {
+    public void buildBankAccountTable() throws CostManagerException;
+    public void dropTable(String name) throws CostManagerException;
+    public void shutDown() throws CostManagerException;
     public List<CostItem> getAllTransactions() throws CostManagerException;
     public CostItem getTransByIndex(int index) throws CostManagerException;
     public List<CostItem> getTransByDate(String fDate, String lDate) throws CostManagerException;

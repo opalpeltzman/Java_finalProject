@@ -7,9 +7,8 @@ import java.util.List;
 
 
 /**
- * concrete class,
  * connection to the derbyDB = the user bank account DB.
- * bankDEmbedded implements all the user <-> DB methods.
+ * Model implements all the user <-> DB methods.
  * each method starts the connection to the DB :
  * # define the Derby connection URL to use
  * # Create a connection to the database
@@ -40,6 +39,7 @@ public class Model implements IModel {
      * The buildBankAccountTable method creates the
      * user account table and the categories available table.
      */
+    @Override
     public void buildBankAccountTable() throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
@@ -102,6 +102,7 @@ public class Model implements IModel {
     /**
      * delete table according to the table name sent.
      */
+    @Override
     public void dropTable(String name) throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
@@ -145,16 +146,12 @@ public class Model implements IModel {
             }
             System.out.println("Dropped table- 'categories'");
         }
-//        try {
-//            //commitChanges();
-//        } catch (CostManagerException e) {
-//            throw e;
-//        }
-    }//v
+    }
 
     /**
      * shuts down the Derby data base.
      */
+    @Override
     public void shutDown() throws CostManagerException {
         if (framework.equals("embedded")) {
             try {
@@ -194,8 +191,6 @@ public class Model implements IModel {
         } catch (SQLException throwables) {
             throw new CostManagerException("Error creating DB", throwables);
         }
-//        ArrayList<Object> transactionIndex = new ArrayList();
-//        ArrayList<Object> transResult = new ArrayList();
 
         List<CostItem> transactions = new ArrayList<>();
         ResultSet resultSet = null;
@@ -205,10 +200,7 @@ public class Model implements IModel {
                             "ORDER BY Exspense_ID");
             while (resultSet.next()) {
                 transactions.add(new CostItem(resultSet.getInt("Exspense_ID"), resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
-//                transactionIndex.add(resultSet.getInt("Exspense_ID"));
             }
-//            transResult.add(transactionIndex);
-//            transResult.add(transactions);
 
         } catch (SQLException throwables) {
             throw new CostManagerException("problem getting all Transaction Costs", throwables);
@@ -437,7 +429,6 @@ public class Model implements IModel {
      */
     @Override
     public void addCostTran(CostItem trans) throws CostManagerException {
-        System.out.println("In add cost item (MODEL) " + dbName);
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -450,24 +441,15 @@ public class Model implements IModel {
             throw new CostManagerException("Error creating DB", throwables);
         }
 
-        // check if category is in categories
-//        checkForCate(trans.getCategory().getCategoryName());
-
         try {
-            System.out.println("In try (MODEL) " + dbName);
             PreparedStatement psInsert;
             psInsert = connection.prepareStatement(
                     "insert into myBankAccount(Category, Cost, Currency, Exspense_date, Description) values (?, ?, ?, ?, ?)");
             psInsert.setString(1, trans.getCategory().getCategoryName());
-            System.out.println("category (MODEL) " + dbName);
             psInsert.setDouble(2, trans.getCost());
-            System.out.println("cost (MODEL) " + dbName);
             psInsert.setString(3, trans.getCurrency().name());
-            System.out.println("currency (MODEL) " + dbName);
             psInsert.setDate(4, trans.getDate());
-            System.out.println("date (MODEL) " + dbName);
             psInsert.setString(5, trans.getDescription());
-            System.out.println("des (MODEL) " + dbName);
             psInsert.executeUpdate();
             //commitChanges();
             System.out.println("Inserted new cost transaction to table- 'myBankAccount'");

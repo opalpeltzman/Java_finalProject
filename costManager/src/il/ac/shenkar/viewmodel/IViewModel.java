@@ -15,13 +15,17 @@ public interface IViewModel {
     public void setModel(IModel model);
 
     //methods:
-    public void disconnectDB();
+    //addCostItem method will add the input item to the application and display the list of the items
     public void addCostItem(CostItem item);
+    //addCategoryItem method will add the input category to the application and display the list of categories
     public void addCategoryItem(String category);
-    public void getCostByDate(String fDate, String lDate);
+    //displayPieChart method will display the pie chart
     public void displayPieChart(String fDate, String lDate);
+    //getAllCosts method use for passing cost items from the model to the view
     public void getAllCosts();
+    //getAllCategories method use for passing Category items from the model to the view
     public void getAllCategories();
+    //deleteCostByIndex method will delete the input item from the application and display the updated list of the items
     public void deleteCostByIndex(int index);
     //getReport method use for passing cost items by date range from the model to the view
     public void getReport(String startDate, String endDate);

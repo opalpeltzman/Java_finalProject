@@ -68,46 +68,8 @@ public class ViewModel implements IViewModel{
     }
 
     /**
-     * exiting DB -
-     * releasing sources and shutting down connections.
+     * display costs by category using PieChart
      */
-    @Override
-    public void disconnectDB(){
-        exec.submit(new Runnable() {
-            @Override
-            public void run() {
-                if (!checkForNull()) {
-
-                    try {
-                        model.exit();
-
-                    } catch (CostManagerException e) {
-                        System.out.println("error exiting app");
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * getting costs by specific date from DB
-     */
-    @Override
-    public void getCostByDate(String fDate, String lDate) {
-        exec.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<CostItem> dateTransactions = new ArrayList<CostItem>(model.getTransByDate(fDate, lDate));
-                    view.showItems(dateTransactions);
-
-                }catch (CostManagerException e) {
-                    view.showMessage(String.format("ERROR!: " + e.getMessage()));
-                }
-            }
-        });
-    }
-
     @Override
     public void displayPieChart(String fDate, String lDate) {
         exec.submit(new Runnable() {
