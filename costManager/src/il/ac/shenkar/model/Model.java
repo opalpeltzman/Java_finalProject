@@ -56,11 +56,11 @@ public class Model implements IModel {
                 // insert default categories to table
                 psInsertCategory = connection.prepareStatement(
                         "insert into categories(Category_name) values (?)");
-                addCategory("food");
-                addCategory("clothes");
-                addCategory("education");
-                addCategory("healthcare");
-                addCategory("maintenance");
+                addCategory(new Category("food"));
+                addCategory(new Category("clothes"));
+                addCategory(new Category("education"));
+                addCategory(new Category("healthcare"));
+                addCategory(new Category("maintenance"));
 
             } catch (SQLException e) {
                 if (e.getSQLState().equals("X0Y32")) {
@@ -182,7 +182,7 @@ public class Model implements IModel {
      * return all cost transactions in the bank account DB table.
      */
     @Override
-    public List<Object> getAllTransactions() throws CostManagerException {
+    public List<CostItem> getAllTransactions() throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -194,21 +194,21 @@ public class Model implements IModel {
         } catch (SQLException throwables) {
             throw new CostManagerException("Error creating DB", throwables);
         }
-        ArrayList<Object> transactionIndex = new ArrayList();
-        ArrayList<Object> transResult = new ArrayList();
+//        ArrayList<Object> transactionIndex = new ArrayList();
+//        ArrayList<Object> transResult = new ArrayList();
 
-        List<CostTransaction> transactions = new ArrayList<>();
+        List<CostItem> transactions = new ArrayList<>();
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery(
                     "SELECT Exspense_ID, Category, Cost, Currency, Exspense_date, Description FROM myBankAccount " +
                             "ORDER BY Exspense_ID");
             while (resultSet.next()) {
-                transactions.add(new CostTransaction(resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
-                transactionIndex.add(resultSet.getInt("Exspense_ID"));
+                transactions.add(new CostItem(resultSet.getInt("Exspense_ID"), resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
+//                transactionIndex.add(resultSet.getInt("Exspense_ID"));
             }
-            transResult.add(transactionIndex);
-            transResult.add(transactions);
+//            transResult.add(transactionIndex);
+//            transResult.add(transactions);
 
         } catch (SQLException throwables) {
             throw new CostManagerException("problem getting all Transaction Costs", throwables);
@@ -231,7 +231,7 @@ public class Model implements IModel {
             System.out.println("disconnect from " + dbName);
         }
 
-        return transResult;
+        return transactions;
     }
 
     /**
@@ -239,7 +239,7 @@ public class Model implements IModel {
      * return the cost transaction=(only one) under that same index
      */
     @Override
-    public CostTransaction getTransByIndex(int index) throws CostManagerException {
+    public CostItem getTransByIndex(int index) throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -251,14 +251,14 @@ public class Model implements IModel {
         } catch (SQLException throwables) {
             throw new CostManagerException("Error creating DB", throwables);
         }
-        CostTransaction transaction = null;
+        CostItem transaction = null;
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery(
                     "SELECT Exspense_ID, Category, Cost, Currency, Exspense_date, Description FROM myBankAccount " +
                             "WHERE Exspense_ID = " + index + "ORDER BY Exspense_ID");
             while (resultSet.next()) {
-                transaction = new CostTransaction(resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description"));
+                transaction = new CostItem(resultSet.getInt("Exspense_ID"), resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description"));
             }
         } catch (SQLException throwables) {
             throw new CostManagerException("problem getting Transaction Costs by index", throwables);
@@ -289,7 +289,7 @@ public class Model implements IModel {
      * return all the cost transaction under that same date
      */
     @Override
-    public List<CostTransaction> getTransByDate(String fDate, String lDate) throws CostManagerException {
+    public List<CostItem> getTransByDate(String fDate, String lDate) throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -301,7 +301,7 @@ public class Model implements IModel {
         } catch (SQLException throwables) {
             throw new CostManagerException("Error creating DB", throwables);
         }
-        List<CostTransaction> transactions = new ArrayList<>();
+        List<CostItem> transactions = new ArrayList<>();
         ResultSet resultSet = null;
         //converting string into sql date :
         java.sql.Date convertFDate = java.sql.Date.valueOf(fDate);
@@ -311,7 +311,7 @@ public class Model implements IModel {
         try {
             resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                transactions.add(new CostTransaction(resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
+                transactions.add(new CostItem(resultSet.getInt("Exspense_ID"), resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
             }
         } catch (SQLException throwables) {
             throw new CostManagerException("problem getting Transaction Costs by index", throwables);
@@ -342,7 +342,7 @@ public class Model implements IModel {
      * return all the cost transaction under that same category
      */
     @Override
-    public List<CostTransaction> getTransByCate(String category) throws CostManagerException {
+    public List<CostItem> getTransByCate(String category) throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -354,14 +354,14 @@ public class Model implements IModel {
         } catch (SQLException throwables) {
             throw new CostManagerException("Error creating DB", throwables);
         }
-        List<CostTransaction> transactions = new ArrayList<>();
+        List<CostItem> transactions = new ArrayList<>();
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery(
                     "SELECT Exspense_ID, Category, Cost, Currency, Exspense_date, Description FROM myBankAccount " +
                             " WHERE Category = '" + category + "' ORDER BY Exspense_ID ");
             while (resultSet.next()) {
-                transactions.add(new CostTransaction(resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
+                transactions.add(new CostItem(resultSet.getInt("Exspense_ID"), resultSet.getString("Category"), resultSet.getDouble("Cost"), resultSet.getString("Currency"), (resultSet.getDate("Exspense_date")).toString(), resultSet.getString("Description")));
                 System.out.println("transactions " + transactions);
             }
         } catch (SQLException throwables) {
@@ -436,7 +436,8 @@ public class Model implements IModel {
      * insert a new cost transaction into the BankAccount table
      */
     @Override
-    public void addCostTran(CostTransaction trans) throws CostManagerException {
+    public void addCostTran(CostItem trans) throws CostManagerException {
+        System.out.println("In add cost item (MODEL) " + dbName);
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -450,17 +451,23 @@ public class Model implements IModel {
         }
 
         // check if category is in categories
-        checkForCate(trans.getCategory());
+//        checkForCate(trans.getCategory().getCategoryName());
 
         try {
+            System.out.println("In try (MODEL) " + dbName);
             PreparedStatement psInsert;
             psInsert = connection.prepareStatement(
                     "insert into myBankAccount(Category, Cost, Currency, Exspense_date, Description) values (?, ?, ?, ?, ?)");
-            psInsert.setString(1, trans.getCategory());
+            psInsert.setString(1, trans.getCategory().getCategoryName());
+            System.out.println("category (MODEL) " + dbName);
             psInsert.setDouble(2, trans.getCost());
+            System.out.println("cost (MODEL) " + dbName);
             psInsert.setString(3, trans.getCurrency().name());
+            System.out.println("currency (MODEL) " + dbName);
             psInsert.setDate(4, trans.getDate());
+            System.out.println("date (MODEL) " + dbName);
             psInsert.setString(5, trans.getDescription());
+            System.out.println("des (MODEL) " + dbName);
             psInsert.executeUpdate();
             //commitChanges();
             System.out.println("Inserted new cost transaction to table- 'myBankAccount'");
@@ -487,7 +494,7 @@ public class Model implements IModel {
      * note: only method checkForCate can call this method.
      */
     @Override
-    public void addCategory(String category) throws CostManagerException {
+    public void addCategory(Category category) throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
         //connection to DB -
@@ -502,7 +509,7 @@ public class Model implements IModel {
         try {
             psInsertCategory = connection.prepareStatement(
                     "insert into categories(Category_name) values (?)");
-            psInsertCategory.setString(1, category);
+            psInsertCategory.setString(1, category.getCategoryName());
             psInsertCategory.executeUpdate();
             //commitChanges();
             System.out.println("Inserted new category = " + category + " to table- 'categories'");
@@ -640,7 +647,7 @@ public class Model implements IModel {
             }
             if (count == 0) {
                 // category doesn't exist in categories table
-                addCategory(category);
+                addCategory(new Category(category));
             }
 
         } catch (SQLException throwables) {

@@ -15,8 +15,8 @@ import java.util.List;
 public class ModelTest extends TestCase {
 
     public static IModel transaction;
-    public static CostTransaction trans = null;
-    public static CostTransaction trans1 = null;
+    public static CostItem trans = null;
+    public static CostItem trans1 = null;
 
     @Override
     public void setUp() throws Exception {
@@ -28,8 +28,8 @@ public class ModelTest extends TestCase {
             e.printStackTrace();
         }
         try {
-            trans1 = new CostTransaction("shoes", 400, "ILS", "2019-12-16", "new transaction");
-            trans = new CostTransaction("food", 10, "ILS", "2019-10-13", "new transaction");
+            trans1 = new CostItem("shoes", 400, "ILS", "2019-12-16", "new transaction");
+            trans = new CostItem("food", 10, "ILS", "2019-10-13", "new transaction");
 
         } catch (CostManagerException costManagerException) {
             costManagerException.printStackTrace();
@@ -53,7 +53,7 @@ public class ModelTest extends TestCase {
         System.out.println("TEST: testGetTransByIndex");
         try {
             int index = 1;
-            CostTransaction tran = transaction.getTransByIndex(index);
+            CostItem tran = transaction.getTransByIndex(index);
             assertEquals("objects should be equal",trans1, tran);
         } catch (CostManagerException e) {
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class ModelTest extends TestCase {
         System.out.println("TEST: testGetTransByNotExistIndex");
         try {
             int index = 7;
-            CostTransaction tran = transaction.getTransByIndex(index);
+            CostItem tran = transaction.getTransByIndex(index);
             assertNull("objects should be null, because the index doesnt exist", tran);
         } catch (CostManagerException e) {
             e.printStackTrace();
@@ -84,8 +84,8 @@ public class ModelTest extends TestCase {
     public void testGetTransCate(){
         System.out.println("TEST: testGetTransCate");
         try {
-            List<CostTransaction> catTransactions = new ArrayList<CostTransaction>(transaction.getTransByCate("shoes"));
-            List<CostTransaction> catTransactionsExpected = new ArrayList<CostTransaction>();
+            List<CostItem> catTransactions = new ArrayList<CostItem>(transaction.getTransByCate("shoes"));
+            List<CostItem> catTransactionsExpected = new ArrayList<CostItem>();
             catTransactionsExpected.add(trans1);
             assertEquals("objects should be equal",catTransactionsExpected, catTransactions);
         } catch (CostManagerException e) {
@@ -101,8 +101,8 @@ public class ModelTest extends TestCase {
     public void testGetTransDate(){
         System.out.println("TEST: testGetTransDate");
         try {
-            List<CostTransaction> dateTransactions = new ArrayList<CostTransaction>(transaction.getTransByDate("2018-10-01", "2020-10-30"));
-            List<CostTransaction> dateTransactionsExpected = new ArrayList<CostTransaction>();
+            List<CostItem> dateTransactions = new ArrayList<CostItem>(transaction.getTransByDate("2018-10-01", "2020-10-30"));
+            List<CostItem> dateTransactionsExpected = new ArrayList<CostItem>();
             dateTransactionsExpected.add(trans1);
             dateTransactionsExpected.add(trans);
             assertEquals("objects should be equal",dateTransactionsExpected, dateTransactions);
@@ -119,8 +119,8 @@ public class ModelTest extends TestCase {
         System.out.println("TEST: testGetAllTrans");
         try {
             List<Object> result = Collections.singletonList(transaction.getAllTransactions());
-            List<CostTransaction> Alltransactions = new ArrayList<CostTransaction>((Collection<? extends CostTransaction>) result.get(1));
-            List<CostTransaction> AlltransactionsExpected = new ArrayList<CostTransaction>();
+            List<CostItem> Alltransactions = new ArrayList<CostItem>((Collection<? extends CostItem>) result.get(1));
+            List<CostItem> AlltransactionsExpected = new ArrayList<CostItem>();
             AlltransactionsExpected.add(trans1);
             AlltransactionsExpected.add(trans);
             assertEquals("objects should be equal",AlltransactionsExpected, Alltransactions);

@@ -1,5 +1,6 @@
 package il.ac.shenkar.viewmodel;
 
+import il.ac.shenkar.model.CostItem;
 import il.ac.shenkar.model.IModel;
 
 /**
@@ -15,13 +16,17 @@ public interface IViewModel {
 
     //methods:
     public void disconnectDB();
-    public void addCostItem(il.ac.shenkar.model.CostTransaction item);
+    public void addCostItem(CostItem item);
     public void addCategoryItem(String category);
     public void getCostByDate(String fDate, String lDate);
     public void displayPieChart(String fDate, String lDate);
     public void getAllCosts();
     public void getAllCategories();
     public void deleteCostByIndex(int index);
+    //getReport method use for passing cost items by date range from the model to the view
+    public void getReport(String startDate, String endDate);
+    //generateReport method will display the cost items list in range of the input date
+    public void generateReport(String startDate, String endDate);
 
 
 }

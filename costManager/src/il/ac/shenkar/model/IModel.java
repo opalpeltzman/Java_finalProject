@@ -8,14 +8,14 @@ import java.util.List;
  * can perform on his bank account data base.
  */
 public interface IModel {
-    public List<Object> getAllTransactions() throws CostManagerException;
-    public CostTransaction getTransByIndex(int index) throws CostManagerException;
-    public List<CostTransaction> getTransByDate(String fDate, String lDate) throws CostManagerException;
-    public List<CostTransaction> getTransByCate(String category) throws CostManagerException;
+    public List<CostItem> getAllTransactions() throws CostManagerException;
+    public CostItem getTransByIndex(int index) throws CostManagerException;
+    public List<CostItem> getTransByDate(String fDate, String lDate) throws CostManagerException;
+    public List<CostItem> getTransByCate(String category) throws CostManagerException;
     public List<String> getAllCategories() throws CostManagerException;
     public HashMap<String, Double> getCostsPieChart(String fDate, String lDate) throws CostManagerException;
-    public void addCostTran(CostTransaction trans) throws CostManagerException;
-    public void addCategory(String category) throws CostManagerException;
+    public void addCostTran(CostItem trans) throws CostManagerException;
+    public void addCategory(Category category) throws CostManagerException;
     public void checkForCate(String category) throws CostManagerException;
     public void deleteCostTrans(int index) throws CostManagerException;
     public void deleteTable(String tableName) throws CostManagerException;

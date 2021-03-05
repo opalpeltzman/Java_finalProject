@@ -1,6 +1,6 @@
 package il.ac.shenkar.viewmodel;
 
-import il.ac.shenkar.model.CostTransaction;
+import il.ac.shenkar.model.CostItem;
 import il.ac.shenkar.model.*;
 import il.ac.shenkar.view.IView;
 import java.util.ArrayList;
@@ -46,14 +46,19 @@ public class ViewModel implements IViewModel{
      * insert a new cost transaction into the BankAccount table
      */
     @Override
-    public void addCostItem(CostTransaction item) {
+    public void addCostItem(CostItem item) {
         exec.submit(new Runnable() {
             @Override
             public void run() {
                 if (!checkForNull()) {
                     try {
                         model.addCostTran(item);
+                        //display the cost items list
+                        List<CostItem> items = model.getAllTransactions();
+                        view.showItems(items);
+
                         view.showMessage(String.format("cost added successfully"));
+
                     } catch (CostManagerException e) {
                         view.showMessage(String.format("ERROR!: " + e.getMessage()));
                     }
@@ -93,7 +98,7 @@ public class ViewModel implements IViewModel{
             @Override
             public void run() {
                 try {
-                    List<CostTransaction> dateTransactions = new ArrayList<CostTransaction>(model.getTransByDate(fDate, lDate));
+                    List<CostItem> dateTransactions = new ArrayList<CostItem>(model.getTransByDate(fDate, lDate));
                     view.showItems(dateTransactions);
 
                 }catch (CostManagerException e) {
@@ -110,7 +115,7 @@ public class ViewModel implements IViewModel{
             public void run() {
                 try {
                     HashMap<String, Double> categoryCostsMAp = new HashMap<>(model.getCostsPieChart(fDate, lDate));
-                    view.displayPieChart(categoryCostsMAp);
+                    view.showPieChart(categoryCostsMAp);
 
                 }catch (CostManagerException e) {
                     view.showMessage(String.format("ERROR!: " + e.getMessage()));
@@ -130,6 +135,11 @@ public class ViewModel implements IViewModel{
                 try {
                     model.checkForCate(category);
                     view.showMessage(String.format("category added successfully"));
+
+                    //display the categories list
+                    List<String> myCategories = new ArrayList<String>(model.getAllCategories());
+                    view.showCategories(myCategories);
+
                 } catch (CostManagerException e) {
                     view.showMessage(String.format("ERROR!: " + e.getMessage()));
 
@@ -147,8 +157,8 @@ public class ViewModel implements IViewModel{
             @Override
             public void run() {
                 try {
-                    List<Object> result = model.getAllTransactions();
-                    view.showAllCosts(result);
+                    List<CostItem> items = model.getAllTransactions();
+                    view.setItems(items);
 
                 }catch (CostManagerException e) {
                     view.showMessage(String.format("ERROR!: " + e.getMessage()));
@@ -167,7 +177,7 @@ public class ViewModel implements IViewModel{
             public void run() {
                 try {
                     List<String> myCategories = new ArrayList<String>(model.getAllCategories());
-                    view.showAllCategories(myCategories);
+                    view.setCategories(myCategories);
 
                 }catch (CostManagerException e) {
                     view.showMessage(String.format("ERROR!: " + e.getMessage()));
@@ -187,11 +197,67 @@ public class ViewModel implements IViewModel{
                 try {
                     model.deleteCostTrans(index);
                     view.showMessage(String.format("cost deleted successfully"));
+
+                    //display the cost items list
+                    List<CostItem> items = model.getAllTransactions();
+                    view.showItems(items);
                 }catch (CostManagerException e) {
                     view.showMessage(String.format("ERROR!: " + e.getMessage()));
                 }
             }
         });
+    }
+
+    /**
+     * getReport method use for passing cost items by date range from the model to the view
+     */
+
+    @Override
+    public void getReport(String startDate, String endDate) {
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //get the cost items list by date range and pass it to view
+                    List<CostItem> report = model.getTransByDate(startDate, endDate);
+                    view.setReport(report);
+                } catch (CostManagerException e) {
+                    view.showMessage("failed to set report list.." + e.getMessage());
+
+                }
+            }
+        });
+
+
+    }
+
+    /**
+     * generateReport method will display the cost items list in range of the input date
+     */
+
+    @Override
+    public void generateReport(String startDate, String endDate) {
+
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //get the cost items list in the input date range and display proper message
+                    List<CostItem> report = model.getTransByDate(startDate, endDate);
+                    view.showMessage("report was generate successfully");
+
+                    //display the report
+                    view.showReport(report);
+
+                } catch (CostManagerException e) {
+                    view.showMessage("failed to generate report.." + e.getMessage());
+
+                }
+            }
+        });
+
     }
 }
 
