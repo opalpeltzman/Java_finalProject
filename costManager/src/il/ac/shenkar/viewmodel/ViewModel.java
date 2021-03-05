@@ -110,7 +110,6 @@ public class ViewModel implements IViewModel{
             public void run() {
                 try {
                     HashMap<String, Double> categoryCostsMAp = new HashMap<>(model.getCostsPieChart(fDate, lDate));
-                    System.out.println("categoryCostsMAp in viewModel" + categoryCostsMAp);
                     view.displayPieChart(categoryCostsMAp);
 
                 }catch (CostManagerException e) {

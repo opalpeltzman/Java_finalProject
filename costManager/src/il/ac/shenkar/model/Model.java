@@ -524,59 +524,6 @@ public class Model implements IModel {
 
     }
 
-//    /**
-//     * according to specific index in the bank account table
-//     * the user can update the details of the transaction
-//     * located in the index he provided,
-//     * only if the index is valid.
-//     * in order to do that -> need to create a new costTransaction
-//     * and replace it with the old costTransaction object.
-//     */
-//    @Override
-//    public void updateCostTrans(int index, CostTransaction trans) throws CostManagerException {
-//        Connection connection = null;
-//        Statement statement = null;
-//        //connection to DB -
-//        try {
-//            connection = DriverManager.getConnection(connectionURL);
-//            System.out.println("Connected to database " + dbName);
-//            statement = connection.createStatement();
-//
-//        } catch (SQLException throwables) {
-//            throw new CostManagerException("Error creating DB", throwables);
-//        }
-//        // check if category is in categories, if not then add it to 'categories' table
-//        checkForCate(trans.getCategory());
-//
-//        try {
-//            PreparedStatement psUpdate = connection.prepareStatement(
-//                    "update myBankAccount set Category=?, Cost=?, Currency=?, Exspense_date=?, Description=? where Exspense_ID=?");
-//            psUpdate.setString(1, trans.getCategory());
-//            psUpdate.setDouble(2, trans.getCost());
-//            psUpdate.setString(3, trans.getCurrency().name());
-//            psUpdate.setDate(4, trans.getDate());
-//            psUpdate.setString(5, trans.getDescription());
-//            psUpdate.setInt(6, index);
-//            psUpdate.executeUpdate();
-//            //commitChanges();
-//            System.out.println("updated new cost transaction at index: " + index);
-//        } catch (SQLException throwables) {
-//            throw new CostManagerException("problem updating transaction", throwables);
-//        } finally {
-//            try {
-//                if (statement != null) {
-//                    statement.close();
-//                }
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException sqle) {
-//                throw new CostManagerException("problem releasing data", sqle);
-//            }
-//            System.out.println("disconnect from " + dbName);
-//        }
-//    }
-
     /**
      * according to specific index in the bank account table
      * the user can delete a cost transaction row in the DB

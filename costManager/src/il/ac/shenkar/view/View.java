@@ -3,6 +3,12 @@ package il.ac.shenkar.view;
 import il.ac.shenkar.model.CostTransaction;
 import il.ac.shenkar.model.*;
 import il.ac.shenkar.viewmodel.IViewModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.Dataset;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +18,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
 import java.util.List;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
 public class View implements IView {
 
@@ -106,7 +120,7 @@ public class View implements IView {
             getAllCateList = new JButton("Get All Categories");
             getAllCostList = new JButton("Get All Costs");
             deleteCostTransactionByIndex = new JButton("Delete Cost By Index");
-            pieChart = new JButton("Show costs pieChart");
+            pieChart = new JButton("Category Costs PieChart");
             exit = new JButton("Exit");
             //creating the messages ui components
             lbMessage = new JLabel("Message: ");
@@ -842,7 +856,7 @@ public class View implements IView {
     /**
      * Display PieChart
      */
-    public class displayPieChartGUI{
+    public class displayPieChartGUI {
 
         private JFrame frame;
         private JPanel panelTop;
@@ -869,6 +883,7 @@ public class View implements IView {
             lbFirstDate = new JLabel("Enter First Date : ");
             tfLastDate =  new JTextField(30);
             lbLastDate = new JLabel("Enter Last Date : ");
+
         }
         public void start(){
             //adding the components to the top panel
@@ -930,20 +945,66 @@ public class View implements IView {
             });
 
             //displaying the window
-            frame.setSize(1200, 600);
+            frame.setSize(1000, 400);
             frame.setVisible(true);
         }
 
-        public void displayPieChart(HashMap<String, Double> categoryCosts) {
+        public void displayPieChart(HashMap<String, Double> categoryCosts){
 
+            HashMap<String, Double> categoryCostsMAp = new HashMap<>(categoryCosts);
+            class PieChart_AWT extends ApplicationFrame {
+
+                public PieChart_AWT(String title) {
+                    super(title);
+                    setContentPane(createDemoPanel( ));
+                }
+
+                private PieDataset createDataset() {
+                    DefaultPieDataset dataset = new DefaultPieDataset( );
+                    Iterator it = categoryCosts.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry)it.next();
+                        dataset.setValue( pair.getKey().toString() , new Double((Double) pair.getValue()));
+            }
+                    return dataset;
+                }
+
+                private JFreeChart createChart( PieDataset dataset ) {
+                    JFreeChart chart = ChartFactory.createPieChart(
+                            "Costs by category",   // chart title
+                            dataset,                    // data
+                            true,               // include legend
+                            true,
+                            false);
+
+                    return chart;
+                }
+
+                public JPanel createDemoPanel( ) {
+                    JFreeChart chart = createChart(createDataset( ) );
+                    return new ChartPanel( chart );
+                }
+
+                /**
+                 * Invoked when a window is in the process of being closed.
+                 * The close operation can be overridden at this point.
+                 *
+                 * @param e
+                 */
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    frame.setVisible(false);
+                }
+            }
+
+            // text area
             StringBuilder sb = new StringBuilder();
-            Iterator it = categoryCosts.entrySet().iterator();
+            Iterator it = categoryCostsMAp.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
-                System.out.println(pair.getKey() + " = " + pair.getValue());
-                sb.append("key ");
+                sb.append("Category: ");
                 sb.append(pair.getKey().toString());
-                sb.append(" ,value ");
+                sb.append(" ,Sum: ");
                 sb.append(pair.getValue().toString());
                 sb.append("\n");
                 it.remove(); // avoids a ConcurrentModificationException
@@ -961,6 +1022,14 @@ public class View implements IView {
                     }
                 });
             }
+
+            // PieChart
+            PieChart_AWT demo = new PieChart_AWT( "Costs by Category" );
+            demo.setSize( 560 , 367 );
+            RefineryUtilities.centerFrameOnScreen( demo );
+            demo.setVisible( true );
+
+
         }
     }
 }
